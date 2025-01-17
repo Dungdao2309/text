@@ -1,0 +1,125 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang chủ</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+      <!-- Phần "Chúc mừng Quản lý!" -->
+      <div class="col-xxl-8 mb-4">
+        <div class="card">
+          <div class="d-flex align-items-start row">
+            <div class="col-sm-7">
+              <div class="card-body">
+                <!-- Tiêu đề thay đổi theo nhóm người dùng -->
+                <h5 class="card-title text-primary mb-3">
+                  {% if is_admin %}
+                    Chúc mừng Admin! 🎉
+                  {% elif is_hr_manager %}
+                    Chúc mừng Quản lý Nhân sự! 🎉
+                  {% elif is_intern %}
+                    Chúc mừng Thực tập sinh! 🎉
+                  {% elif is_internship_coordinator %}
+                    Chúc mừng Điều phối viên Thực tập! 🎉
+                  {% elif is_mentor %}
+                    Chúc mừng Người hướng dẫn! 🎉
+                  {% else %}
+                    Chúc mừng! 🎉
+                  {% endif %}
+                </h5>
+
+                <p class="mb-3">Bạn đã hoàn thành {{ completed_tasks }} công việc hôm nay!</p>
+                <p class="mb-3">Bạn còn {{ remaining_tasks }} công việc hôm nay!</p>
+
+                <!-- Kiểm tra từng nhóm và hiển thị nội dung phù hợp -->
+                {% if is_admin %}
+                  <!-- Nội dung dành cho Admin -->
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">Quản lý hệ thống</a>
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">xem báo cáo</a>
+                {% elif is_hr_manager %}
+                  <!-- Nội dung dành cho HR Managers -->
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">Xem huy hiệu</a>
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">Bắt đầu công việc còn lại</a>
+                {% elif is_intern %}
+                  <!-- Nội dung dành cho Interns -->
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">Xem nhiệm vụ</a>
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">Nộp báo cáo</a>
+                {% elif is_internship_coordinator %}
+                  <!-- Nội dung dành cho Internship Coordinators -->
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">Quản lý thực tập sinh</a>
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">xem tiến độ</a>
+                {% elif is_mentor %}
+                  <!-- Nội dung dành cho Mentors -->
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">Hướng dẫn thực tập sinh</a>
+                  <a href="javascript:;" class="btn btn-sm btn-outline-primary">Đánh giá công việc</a>
+                {% else %}
+                  <!-- Nội dung mặc định cho người dùng không thuộc nhóm nào -->
+                  <p class="text-muted">Bạn không thuộc nhóm nào được cấp quyền.</p>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-sm-5 text-center text-sm-left">
+              <div class="card-body pb-0 px-0 px-md-6">
+                <img src="{% static 'home/assets/img/illustrations/man-with-laptop.png' %}" height="175" class="scaleX-n1-rtl" alt="View Badge User" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thông tin tóm tắt nhanh -->
+      <div class="col-12 col-md-4 mb-4">
+        <div class="row">
+          <div class="col-11 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title mb-4">Thông tin tóm tắt nhanh</h5>
+                <ul class="list-unstyled mb-0">
+                  <li class="d-flex mb-3">
+                    <div class="avatar flex-shrink-0 me-3">
+                      <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-user bx-sm"></i></span>
+                    </div>
+                    <div>
+                      <h6 class="mb-0">Sinh viên đang hoạt động</h6>
+                      <small class="text-muted">{{ active_interns }}</small>
+                    </div>
+                  </li>
+                  <li class="d-flex mb-3">
+                    <div class="avatar flex-shrink-0 me-3">
+                      <span class="avatar-initial rounded bg-label-info"><i class="bx bx-book bx-sm"></i></span>
+                    </div>
+                    <div>
+                      <h6 class="mb-0">Chương trình đào tạo</h6>
+                      <small class="text-muted">{{ training_programs }}</small>
+                    </div>
+                  </li>
+                  <li class="d-flex">
+                    <div class="avatar flex-shrink-0 me-3">
+                      <span class="avatar-initial rounded bg-label-success"><i class="bx bx-check-circle bx-sm"></i></span>
+                    </div>
+                    <div>
+                      <h6 class="mb-0">Tỷ lệ hoàn thành công việc</h6>
+                      <small class="text-muted">{{ completion_rate|floatformat:0 }}%</small>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS và dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

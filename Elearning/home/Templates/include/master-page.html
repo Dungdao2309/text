@@ -1,0 +1,336 @@
+{% load static %}
+<!doctype html>
+
+<html
+  lang="en"
+  class="light-style layout-menu-fixed layout-compact"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+  data-style="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>Demo : Dashboard - Analytics | sneat - Bootstrap Dashboard PRO</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{%static 'home/assets/img/favicon/favicon.ico' %}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet" />
+
+    <link rel="stylesheet" href="{%static 'home/assets/vendor/fonts/boxicons.css' %}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{%static 'home/assets/vendor/css/core.css' %}" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="{%static 'home/assets/vendor/css/theme-default.css' %}" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{%static 'home/assets/css/demo.css' %}" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{%static 'home/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css' %}" />
+    <link rel="stylesheet" href="{%static 'home/assets/vendor/libs/apex-charts/apex-charts.css' %}" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src=" {%static 'home/assets/vendor/js/helpers.js' %}"></script>
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js' %} in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src=" {%static 'home/assets/js/config.js' %}"></script>
+    <style>
+      /* Chế độ sáng mặc định */
+      body {
+        background-color: #ffffff;
+        color: #000000;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      /* Chế độ tối */
+      body.dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+
+      /* Navbar trong chế độ tối */
+      body.dark-mode .navbar {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .dropdown-menu {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
+        border-color: #333333 !important;
+      }
+
+      body.dark-mode .dropdown-item {
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .dropdown-item:hover {
+        background-color: #333333 !important;
+      }
+
+      body.dark-mode .text-muted {
+        color: #b0b0b0 !important;
+      }
+
+      body.dark-mode .form-check-label {
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .bg-navbar-theme {
+        background-color: #1e1e1e !important;
+      }
+
+      body.dark-mode .navbar-nav .nav-link {
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .navbar-nav .nav-link:hover {
+        color: #b0b0b0 !important;
+      }
+
+      /* Footer trong chế độ tối */
+      body.dark-mode .footer {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .footer-link {
+        color: #b0b0b0 !important;
+      }
+
+      body.dark-mode .footer-link:hover {
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .text-body {
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .bg-footer-theme {
+        background-color: #1e1e1e !important;
+      }
+
+      /* Content wrapper trong chế độ tối */
+      body.dark-mode .content-wrapper {
+        background-color: #121212 !important;
+        color: #ffffff !important;
+      }
+
+      /* Layout container trong chế độ tối */
+      body.dark-mode .layout-container {
+        background-color: #121212 !important;
+        color: #ffffff !important;
+      }
+
+      /* Menu trong chế độ tối */
+      body.dark-mode .layout-menu {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .layout-menu .menu-item {
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .layout-menu .menu-item:hover {
+        background-color: #333333 !important;
+      }
+      /* Chế độ tối cho menu */
+      body.dark-mode .menu {
+        background-color: #1e1e1e !important; /* Màu nền tối */
+        color: #ffffff !important; /* Màu chữ trắng */
+      }
+
+      body.dark-mode .menu-item {
+        color: #ffffff !important; /* Màu chữ trắng cho các mục menu */
+      }
+
+      body.dark-mode .menu-item:hover {
+        background-color: #333333 !important; /* Màu nền khi hover */
+      }
+
+      body.dark-mode .menu-link {
+        color: #ffffff !important; /* Màu chữ trắng cho các liên kết menu */
+      }
+
+      body.dark-mode .menu-link:hover {
+        color: #b0b0b0 !important; /* Màu chữ nhạt hơn khi hover */
+      }
+
+      body.dark-mode .app-brand-link {
+        color: #ffffff !important; /* Màu chữ trắng cho logo và tên ứng dụng */
+      }
+
+      body.dark-mode .app-brand-link:hover {
+        color: #b0b0b0 !important; /* Màu chữ nhạt hơn khi hover */
+      }
+
+      body.dark-mode .menu-icon {
+        color: #ffffff !important; /* Màu chữ trắng cho biểu tượng menu */
+      }
+
+      body.dark-mode .menu-icon:hover {
+        color: #b0b0b0 !important; /* Màu chữ nhạt hơn khi hover */
+      }
+      /* Bỏ gạch chân cho các liên kết trong menu */
+      .menu-link {
+        text-decoration: none !important;
+      }
+
+      /* Đảm bảo gạch chân không xuất hiện khi hover */
+      .menu-link:hover {
+        text-decoration: none !important;
+      }
+      body.dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+  
+      /* Navbar trong chế độ tối */
+      body.dark-mode .navbar {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
+      }
+  
+      /* Footer trong chế độ tối */
+      body.dark-mode .footer {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
+      }
+  
+      /* Card trong chế độ tối */
+      body.dark-mode .card {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
+        border-color: #333333 !important;
+      }
+  
+      /* Text trong chế độ tối */
+      body.dark-mode .text-muted {
+        color: #b0b0b0 !important;
+      }
+  
+      /* Link trong chế độ tối */
+      body.dark-mode a {
+        color: #ffffff !important;
+      }
+  
+      body.dark-mode a:hover {
+        color: #b0b0b0 !important;
+      }
+      .dark-mode .list-group-item {
+        background-color: #1e1e1e;
+        border-color: #333;
+        color: #ffffff;
+      }
+      .dark-mode .btn-outline-primary {
+        border-color: #0d6efd;
+        color: #0d6efd;
+      }
+      .dark-mode .btn-outline-primary:hover {
+        background-color: #0d6efd;
+        color: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
+        {% block menu %}
+        {% endblock %}
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
+          {% block navbar %}
+          {% endblock %}
+          <!-- / Navbar -->
+
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+            {% block content %}
+            {% endblock %}
+            <!-- / Content -->
+
+            <!-- Footer -->
+            {% block footer %}
+            {% endblock %}
+            <!-- / Footer -->
+
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+      </div>
+
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js' %} -->
+
+    <script src=" {%static 'home/assets/vendor/libs/jquery/jquery.js' %}"></script>
+    <script src=" {%static 'home/assets/vendor/libs/popper/popper.js' %}"></script>
+    <script src=" {%static 'home/assets/vendor/js/bootstrap.js' %}"></script>
+    <script src=" {%static 'home/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js' %}"></script>
+    <script src=" {%static 'home/assets/vendor/js/menu.js' %}"></script>
+
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src=" {%static 'home/assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+
+    <!-- Main JS -->
+    <script src=" {%static 'home/assets/js/main.js' %}"></script>
+
+    <!-- Page JS -->
+    <script src=" {%static 'home/assets/js/dashboards-analytics.js' %}"></script>
+
+    <!-- Place this tag before closing body tag for github widget button. -->
+    <script async defer src="https://buttons.github.io/buttons.js' %}"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+    
+        // Kiểm tra trạng thái chế độ tối từ localStorage
+        if (localStorage.getItem('darkMode') === 'enabled') {
+          body.classList.add('dark-mode');
+          darkModeToggle.checked = true;
+        }
+    
+        // Bắt sự kiện khi công tắc được nhấn
+        darkModeToggle.addEventListener('change', function() {
+          if (this.checked) {
+            body.classList.add('dark-mode');
+            localStorage.setItem('darkMode', 'enabled');
+          } else {
+            body.classList.remove('dark-mode');
+            localStorage.setItem('darkMode', 'disabled');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
