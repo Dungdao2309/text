@@ -32,6 +32,33 @@ urlpatterns = [
     path('myprofile/', views.myprofile, name='myprofile'),
     path('reports/', views.reports, name='reports'),
     path('helpvasupport/', views.helpvasupport, name='helpvasupport'),
+
+    # Quản lý thông báo
+    path('notifications/', views.notification_list, name='notification_list'),
+    path('notifications/<int:pk>/mark-as-read/', views.mark_notification_as_read, name='mark_notification_as_read'),
+    path('notifications/<int:pk>/delete/', views.delete_notification, name='delete_notification'),
+
+    # Quản lý công việc
+    path('tasks/', views.task_list, name='task_list'),
+    path('tasks/<int:pk>/', views.task_detail, name='task_detail'),
+    path('tasks/create/', views.task_create, name='task_create'),
+    path('tasks/<int:pk>/update/', views.task_update, name='task_update'),
+    path('tasks/<int:pk>/delete/', views.task_delete, name='task_delete'),
+
+    # Quản lý phản hồi
+    path('feedbacks/', views.feedback_list, name='feedback_list'),
+    path('feedbacks/<int:pk>/', views.feedback_detail, name='feedback_detail'),
+    path('feedbacks/create/', views.feedback_create, name='feedback_create'),
+
+    # Quản lý hiệu suất
+    path('performances/', views.performance_list, name='performance_list'),
+    path('performances/<int:pk>/', views.performance_detail, name='performance_detail'),
+
+    # Quản lý chương trình đào tạo
+    path('training-programs/<int:pk>/enroll/', views.enroll_training_program, name='enroll_training_program'),
+
+    # Quản lý hồ sơ cá nhân
+    path('update-profile/', views.update_profile, name='update_profile'),
 ]
 
 # Phục vụ file media trong môi trường DEBUG
