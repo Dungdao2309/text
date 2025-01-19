@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
@@ -59,6 +59,27 @@ urlpatterns = [
 
     # Quản lý hồ sơ cá nhân
     path('update-profile/', views.update_profile, name='update_profile'),
+
+    # Quản lý điểm danh
+    path('attendances/', views.attendance_list, name='attendance_list'),
+    path('attendances/<int:pk>/', views.attendance_detail, name='attendance_detail'),
+    path('attendances/create/', views.attendance_create, name='attendance_create'),
+    path('attendances/<int:pk>/update/', views.attendance_update, name='attendance_update'),
+    path('attendances/<int:pk>/delete/', views.attendance_delete, name='attendance_delete'),
+
+    # Quản lý sự kiện
+    path('events/', views.event_list, name='event_list'),
+    path('events/<int:pk>/', views.event_detail, name='event_detail'),
+    path('events/create/', views.event_create, name='event_create'),
+    path('events/<int:pk>/update/', views.event_update, name='event_update'),
+    path('events/<int:pk>/delete/', views.event_delete, name='event_delete'),
+    path('quanlituyendung/tao-bai-dang/', views.create_job_post, name='create_job_post'),
+    path('quanlituyendung/quan-ly-ung-vien/', views.manage_candidates, name='manage_candidates'),
+    path('quanlituyendung/lich-phong-van/', views.schedule_interview, name='schedule_interview'),
+    path('quanlituyendung/danh-gia-ung-vien/<int:candidate_id>/', views.evaluate_candidate, name='evaluate_candidate'),
+    path('quanlituyendung/generate-report/', views.generate_report, name='generate_report'),
+    path('quanlituyendung/integrate-system/', views.integrate_system, name='integrate_system'),
+    path('quanlituyendung/manage-permissions/', views.manage_permissions, name='manage_permissions'),
 ]
 
 # Phục vụ file media trong môi trường DEBUG

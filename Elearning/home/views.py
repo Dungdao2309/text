@@ -17,9 +17,11 @@ from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.password_validation import validate_password
 import logging
-from .models import Intern, TrainingProgram, Task, Notification, Performance, Feedback, Department, Project, Attendance, Report, Event
+from .models import Intern, TrainingProgram, Task, Notification, Performance, Feedback, Department, Project, Attendance, Report, Event,Recruitment,JobPost,Candidate,Interview,CandidateEvaluation,UserPermission,Integration,Report
 from django import forms
 from .utils import get_user_groups_context
+from .forms import RecruitmentForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +88,41 @@ def is_hr(user):
 # Trang quản lý tuyển dụng (chỉ HR và Admin)
 @user_passes_test(lambda u: is_hr(u) or u.is_superuser)
 def quanlituyendung(request):
+    if request.method == 'POST':
+        form = RecruitmentForm(request.POST)
+        if form.is_valid():
+            recruitment = form.save(commit=False)
+            recruitment.posted_by = request.user
+            try:
+                recruitment.full_clean()  # Kiểm tra validation trước khi lưu
+                recruitment.save()
+                messages.success(request, 'Chiến dịch tuyển dụng đã được tạo thành công.')
+                return redirect('quanlituyendung')
+            except ValidationError as e:
+                # Hiển thị lỗi validation cho người dùng
+                for field, errors in e.message_dict.items():
+                    for error in errors:
+                        messages.error(request, f"{field}: {error}")
+    else:
+        form = RecruitmentForm()
+
+    # Phân trang danh sách tuyển dụng
+    recruitments_list = Recruitment.objects.all().order_by('-posted_date')
+    paginator = Paginator(recruitments_list, 10)  # Hiển thị 10 chiến dịch trên mỗi trang
+    page_number = request.GET.get('page')  # Lấy số trang từ query parameter
+
+    try:
+        recruitments = paginator.page(page_number)
+    except PageNotAnInteger:
+        # Nếu page không phải là số nguyên, hiển thị trang đầu tiên
+        recruitments = paginator.page(1)
+    except EmptyPage:
+        # Nếu page vượt quá số trang có sẵn, hiển thị trang cuối cùng
+        recruitments = paginator.page(paginator.num_pages)
+
     context = get_user_groups_context(request.user)
+    context['recruitments'] = recruitments
+    context['form'] = form
     return render(request, 'Quanlituyendung/quanlituyendung.html', context)
 
 # Trang lịch phỏng vấn (chỉ HR, Admin, và Internship Coordinators)
@@ -408,44 +444,6 @@ def feedback_detail(request, pk):
     return render(request, 'home/feedback_detail.html', context)
 
 @login_required
-def enroll_training_program(request, pk):
-    program = get_object_or_404(TrainingProgram, pk=pk)
-    intern = Intern.objects.get(user=request.user)
-    program.interns.add(intern)
-    messages.success(request, 'Bạn đã đăng ký thành công chương trình đào tạo.')
-    return redirect('training_program_detail', pk=pk)
-
-# Quản lý hiệu suất
-@login_required
-def performance_list(request):
-    performances = Performance.objects.filter(intern__user=request.user).order_by('-evaluation_date')
-    context = get_user_groups_context(request.user)
-    context['performances'] = performances
-    return render(request, 'home/performance_list.html', context)
-
-@login_required
-def performance_detail(request, pk):
-    performance = get_object_or_404(Performance, pk=pk, intern__user=request.user)
-    context = get_user_groups_context(request.user)
-    context['performance'] = performance
-    return render(request, 'home/performance_detail.html', context)
-
-# Quản lý phản hồi
-@login_required
-def feedback_list(request):
-    feedbacks = Feedback.objects.filter(intern__user=request.user).order_by('-feedback_date')
-    context = get_user_groups_context(request.user)
-    context['feedbacks'] = feedbacks
-    return render(request, 'home/feedback_list.html', context)
-
-@login_required
-def feedback_detail(request, pk):
-    feedback = get_object_or_404(Feedback, pk=pk, intern__user=request.user)
-    context = get_user_groups_context(request.user)
-    context['feedback'] = feedback
-    return render(request, 'home/feedback_detail.html', context)
-
-@login_required
 def feedback_create(request):
     class FeedbackForm(forms.Form):  # Tạo form trực tiếp trong view
         content = forms.CharField(widget=forms.Textarea)
@@ -514,3 +512,267 @@ def start_remaining_tasks(request):
     context = get_user_groups_context(request.user)
     context['remaining_tasks'] = remaining_tasks
     return render(request, 'home/start_remaining_tasks.html', context)
+
+# Quản lý điểm danh
+@login_required
+def attendance_list(request):
+    attendances = Attendance.objects.all()
+    context = get_user_groups_context(request.user)
+    context['attendances'] = attendances
+    return render(request, 'home/attendance_list.html', context)
+
+@login_required
+def attendance_detail(request, pk):
+    attendance = get_object_or_404(Attendance, pk=pk)
+    context = get_user_groups_context(request.user)
+    context['attendance'] = attendance
+    return render(request, 'home/attendance_detail.html', context)
+
+# Quản lý điểm danh
+@login_required
+def attendance_create(request):
+    context = get_user_groups_context(request.user)  # Khởi tạo context
+
+    if request.method == 'POST':
+        # Xử lý form tạo mới điểm danh
+        pass
+    else:
+        # Hiển thị form tạo mới
+        pass
+    return render(request, 'home/attendance_form.html', context)
+
+@login_required
+def attendance_update(request, pk):
+    attendance = get_object_or_404(Attendance, pk=pk)
+    context = get_user_groups_context(request.user)  # Khởi tạo context
+    context['attendance'] = attendance  # Thêm thông tin điểm danh vào context
+
+    if request.method == 'POST':
+        # Xử lý form cập nhật điểm danh
+        pass
+    else:
+        # Hiển thị form cập nhật
+        pass
+    return render(request, 'home/attendance_form.html', context)
+
+@login_required
+def attendance_delete(request, pk):
+    attendance = get_object_or_404(Attendance, pk=pk)
+    attendance.delete()
+    messages.success(request, 'Điểm danh đã được xóa thành công.')
+    return redirect('attendance_list')
+
+# Quản lý sự kiện
+@login_required
+def event_list(request):
+    events = Event.objects.all()
+    context = get_user_groups_context(request.user)
+    context['events'] = events
+    return render(request, 'home/event_list.html', context)
+
+@login_required
+def event_detail(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    context = get_user_groups_context(request.user)
+    context['event'] = event
+    return render(request, 'home/event_detail.html', context)
+
+# Quản lý sự kiện
+@login_required
+def event_create(request):
+    context = get_user_groups_context(request.user)  # Khởi tạo context
+
+    if request.method == 'POST':
+        # Xử lý form tạo mới sự kiện
+        pass
+    else:
+        # Hiển thị form tạo mới
+        pass
+    return render(request, 'home/event_form.html', context)
+
+@login_required
+def event_update(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    context = get_user_groups_context(request.user)  # Khởi tạo context
+    context['event'] = event  # Thêm thông tin sự kiện vào context
+
+    if request.method == 'POST':
+        # Xử lý form cập nhật sự kiện
+        pass
+    else:
+        # Hiển thị form cập nhật
+        pass
+    return render(request, 'home/event_form.html', context)
+
+@login_required
+def event_delete(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    event.delete()
+    messages.success(request, 'Sự kiện đã được xóa thành công.')
+    return redirect('event_list')
+
+# Quản lý báo cáo
+@login_required
+def report_list(request):
+    reports = Report.objects.filter(user=request.user)
+    context = get_user_groups_context(request.user)
+    context['reports'] = reports
+    return render(request, 'home/report_list.html', context)
+
+@login_required
+def report_detail(request, pk):
+    report = get_object_or_404(Report, pk=pk, user=request.user)
+    context = get_user_groups_context(request.user)
+    context['report'] = report
+    return render(request, 'home/report_detail.html', context)
+
+# Quản lý hiệu suất
+@login_required
+def performance_list(request):
+    performances = Performance.objects.filter(intern__user=request.user).order_by('-evaluation_date')
+    context = get_user_groups_context(request.user)
+    context['performances'] = performances
+    return render(request, 'home/performance_list.html', context)
+
+@login_required
+def performance_detail(request, pk):
+    performance = get_object_or_404(Performance, pk=pk, intern__user=request.user)
+    context = get_user_groups_context(request.user)
+    context['performance'] = performance
+    return render(request, 'home/performance_detail.html', context)
+
+@login_required
+def enroll_training_program(request, pk):
+    program = get_object_or_404(TrainingProgram, pk=pk)
+
+@user_passes_test(lambda u: is_hr(u) or u.is_superuser)
+def edit_recruitment(request, pk):
+    recruitment = get_object_or_404(Recruitment, pk=pk)
+    if request.method == 'POST':
+        form = RecruitmentForm(request.POST, instance=recruitment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Chiến dịch tuyển dụng đã được cập nhật.')
+            return redirect('quanlituyendung')
+    else:
+        form = RecruitmentForm(instance=recruitment)
+    
+    context = get_user_groups_context(request.user)
+    context['form'] = form
+    return render(request, 'Quanlituyendung/edit_recruitment.html', context)
+
+@user_passes_test(lambda u: is_hr(u) or u.is_superuser)
+def delete_recruitment(request, pk):
+    recruitment = get_object_or_404(Recruitment, pk=pk)
+    recruitment.delete()
+    messages.success(request, 'Chiến dịch tuyển dụng đã được xóa.')
+    return redirect('quanlituyendung')
+
+@login_required
+def create_job_post(request):
+    if request.method == 'POST':
+        title = request.POST.get('jobPostTitle')
+        description = request.POST.get('jobPostDescription')
+        platform = request.POST.get('jobPostPlatform')
+
+        # Kiểm tra xem các trường bắt buộc có được điền hay không
+        if not title:
+            messages.error(request, 'Tiêu đề không được để trống.')
+            return redirect('quanlituyendung')
+        if not platform:
+            messages.error(request, 'Nền tảng không được để trống.')
+            return redirect('quanlituyendung')
+
+        # Tạo JobPost và lưu vào cơ sở dữ liệu
+        try:
+            JobPost.objects.create(
+                title=title,
+                description=description,
+                platform=platform,
+                posted_by=request.user
+            )
+            messages.success(request, 'Bài đăng tuyển dụng đã được tạo thành công.')
+        except Exception as e:
+            messages.error(request, f'Lỗi khi tạo bài đăng: {str(e)}')
+
+        return redirect('quanlituyendung')
+    
+@login_required
+def manage_candidates(request):
+    candidates = Candidate.objects.all()
+    context = {
+        'candidates': candidates,
+    }
+    return render(request, 'quanlituyendung.html', context)
+
+@login_required
+def schedule_interview(request):
+    if request.method == 'POST':
+        candidate_id = request.POST.get('interviewCandidate')
+        interview_date = request.POST.get('interviewDate')
+        interview_time = request.POST.get('interviewTime')
+        candidate = Candidate.objects.get(id=candidate_id)
+        Interview.objects.create(
+            candidate=candidate,
+            interview_date=interview_date,
+            interview_time=interview_time,
+            interviewer=request.user
+        )
+        messages.success(request, 'Lịch phỏng vấn đã được tạo thành công.')
+        return redirect('quanlituyendung')
+
+@login_required
+def evaluate_candidate(request):
+    if request.method == 'POST':
+        candidate_id = request.POST.get('candidateEvaluation')
+        score = request.POST.get('evaluationScore')
+        comments = request.POST.get('candidateEvaluation')
+        candidate = Candidate.objects.get(id=candidate_id)
+        CandidateEvaluation.objects.create(
+            candidate=candidate,
+            evaluator=request.user,
+            score=score,
+            comments=comments
+        )
+        messages.success(request, 'Đánh giá đã được lưu thành công.')
+        return redirect('quanlituyendung')
+    
+@login_required
+def generate_report(request):
+    if request.method == 'POST':
+        report_type = request.POST.get('reportType')
+        content = request.POST.get('reportContent')
+        Report.objects.create(
+            report_type=report_type,
+            generated_by=request.user,
+            content=content
+        )
+        messages.success(request, 'Báo cáo đã được tạo thành công.')
+        return redirect('quanlituyendung')
+    
+@login_required
+def integrate_system(request):
+    if request.method == 'POST':
+        system = request.POST.get('integrationSystem')
+        Integration.objects.create(
+            system=system,
+            integrated_by=request.user
+        )
+        messages.success(request, 'Hệ thống đã được tích hợp thành công.')
+        return redirect('quanlituyendung')
+    
+@login_required
+def manage_permissions(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('userRole')
+        role = request.POST.get('userRole')
+        permission = request.POST.get('userPermissions')
+        try:
+            user = User.objects.get(id=user_id)
+            group, created = Group.objects.get_or_create(name=role)
+            user.groups.add(group)
+            messages.success(request, f'Quyền truy cập của {user.username} đã được cập nhật thành công.')
+        except User.DoesNotExist:
+            messages.error(request, 'Người dùng không tồn tại.')
+        return redirect('quanlituyendung')  # Chuyển hướng về trang quản lý tuyển dụng
+    return render(request, 'manage_permissions.html')  # Hiển thị form quản lý quyền truy cập

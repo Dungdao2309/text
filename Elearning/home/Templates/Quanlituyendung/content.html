@@ -24,15 +24,18 @@
     .dark-mode ::-ms-input-placeholder {
         color: #a0a0a0;
     }
+
     body {
       background-color: #f8f9fa;
       font-family: 'Arial', sans-serif;
       transition: background-color 0.3s, color 0.3s;
     }
+
     body.dark-mode {
       background-color: #121212;
       color: #ffffff;
     }
+
     .card {
       border: none;
       border-radius: 10px;
@@ -40,19 +43,23 @@
       margin-bottom: 20px;
       transition: background-color 0.3s, color 0.3s;
     }
+
     .dark-mode .card {
       background-color: #1e1e1e;
       color: #ffffff;
     }
+
     .card-header {
       background-color: #007bff;
       color: white;
       border-radius: 10px 10px 0 0;
       padding: 15px;
     }
+
     .dark-mode .card-header {
       background-color: #0d6efd;
     }
+
     .btn-success {
       background-color: #28a745;
       border: none;
@@ -60,9 +67,11 @@
       border-radius: 5px;
       transition: background-color 0.3s;
     }
+
     .btn-success:hover {
       background-color: #218838;
     }
+
     .btn-warning {
       background-color: #ffc107;
       border: none;
@@ -70,42 +79,53 @@
       border-radius: 5px;
       transition: background-color 0.3s;
     }
+
     .btn-warning:hover {
       background-color: #e0a800;
     }
+
     .form-control {
       border-radius: 5px;
       border: 1px solid #ddd;
       padding: 10px;
+      transition: background-color 0.3s, border-color 0.3s, color 0.3s;
     }
+
     .dark-mode .form-control {
       background-color: #2d2d2d;
       border-color: #444;
       color: #ffffff;
     }
+
     .form-control:focus {
       border-color: #007bff;
       box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     }
+
     .form-label {
       font-weight: bold;
       color: #333;
     }
+
     .dark-mode .form-label {
       color: #ffffff;
     }
+
     .form-check-label {
       color: #555;
     }
+
     .dark-mode .form-check-label {
       color: #ffffff;
     }
+
     .avatar {
       width: 40px;
       height: 40px;
       border-radius: 50%;
       cursor: pointer;
     }
+
     .dropdown-menu {
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -132,57 +152,118 @@
         <h5 class="card-title">Quản lý Chiến dịch Tuyển dụng</h5>
       </div>
       <div class="card-body">
-        <form>
+        <!-- Hiển thị thông báo lỗi từ Django messages -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <!-- Form tạo chiến dịch tuyển dụng -->
+        <form method="post" action="{% url 'create_job_post' %}">
+          {% csrf_token %}
           <div class="mb-3">
-            <label for="campaignTitle" class="form-label">Tiêu đề Chiến dịch</label>
-            <input type="text" class="form-control" id="campaignTitle" placeholder="Nhập tiêu đề chiến dịch">
+            <label for="jobPostTitle" class="form-label">Tiêu đề Bài Đăng</label>
+            <input type="text" class="form-control" id="jobPostTitle" name="jobPostTitle" placeholder="Nhập tiêu đề bài đăng" required>
           </div>
           <div class="mb-3">
-            <label for="campaignDescription" class="form-label">Mô tả Chiến dịch</label>
-            <textarea class="form-control" id="campaignDescription" rows="3" placeholder="Nhập mô tả chiến dịch"></textarea>
+            <label for="jobPostDescription" class="form-label">Mô tả Bài Đăng</label>
+            <textarea class="form-control" id="jobPostDescription" name="jobPostDescription" rows="3" placeholder="Nhập mô tả bài đăng" required></textarea>
           </div>
           <div class="mb-3">
-            <label for="campaignStartDate" class="form-label">Ngày Bắt đầu</label>
-            <input type="date" class="form-control" id="campaignStartDate">
+            <label for="jobPostPlatform" class="form-label">Nền tảng Đăng Bài</label>
+            <select class="form-select" id="jobPostPlatform" name="jobPostPlatform" required>
+              <option value="website">Trang web Công ty</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="indeed">Indeed</option>
+            </select>
           </div>
           <div class="mb-3">
-            <label for="campaignEndDate" class="form-label">Ngày Kết thúc</label>
-            <input type="date" class="form-control" id="campaignEndDate">
-          </div>
-          <div class="mb-3">
-            <label for="campaignRequirements" class="form-label">Yêu cầu</label>
-            <textarea class="form-control" id="campaignRequirements" rows="3" placeholder="Nhập yêu cầu chiến dịch"></textarea>
+            <label for="deadline" class="form-label">Hạn nộp hồ sơ</label>
+            <input type="date" class="form-control" id="deadline" name="deadline" required>
           </div>
           <button type="submit" class="btn btn-success">Tạo Chiến dịch</button>
         </form>
       </div>
     </div>
 
-    <!-- Đăng Bài Tuyển Dụng -->
+        <!-- Danh sách Chiến dịch Tuyển dụng -->
     <div class="card">
       <div class="card-header">
-        <h5 class="card-title">Đăng Bài Tuyển Dụng</h5>
+        <h5 class="card-title">Danh sách Chiến dịch Tuyển dụng</h5>
       </div>
       <div class="card-body">
-        <form>
-          <div class="mb-3">
-            <label for="jobPostTitle" class="form-label">Tiêu đề Bài Đăng</label>
-            <input type="text" class="form-control" id="jobPostTitle" placeholder="Nhập tiêu đề bài đăng">
-          </div>
-          <div class="mb-3">
-            <label for="jobPostDescription" class="form-label">Mô tả Bài Đăng</label>
-            <textarea class="form-control" id="jobPostDescription" rows="3" placeholder="Nhập mô tả bài đăng"></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="jobPostPlatform" class="form-label">Nền tảng Đăng Bài</label>
-            <select class="form-select" id="jobPostPlatform">
-              <option value="website">Trang web Công ty</option>
-              <option value="linkedin">LinkedIn</option>
-              <option value="indeed">Indeed</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-success">Đăng Bài</button>
-        </form>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Vị trí</th>
+              <th>Ngày đăng</th>
+              <th>Hạn nộp</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if recruitments %}
+              {% for recruitment in recruitments %}
+                <tr>
+                  <td>{{ recruitment.position }}</td>
+                  <td>{{ recruitment.posted_date|date:"d/m/Y" }}</td>
+                  <td>{{ recruitment.deadline|date:"d/m/Y" }}</td>
+                  <td>
+                    {% if recruitment.is_active %}
+                      <span class="badge bg-success">Đang hoạt động</span>
+                    {% else %}
+                      <span class="badge bg-danger">Đã đóng</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="4" class="text-center">Không có chiến dịch tuyển dụng nào.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+
+        <!-- Phân trang -->
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            {% if recruitments.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="First">
+                  <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ recruitments.previous_page_number }}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            {% endif %}
+
+            <li class="page-item disabled">
+              <span class="page-link">
+                Trang {{ recruitments.number }} / {{ recruitments.paginator.num_pages }}
+              </span>
+            </li>
+
+            {% if recruitments.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ recruitments.next_page_number }}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ recruitments.paginator.num_pages }}" aria-label="Last">
+                  <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
       </div>
     </div>
 
@@ -192,14 +273,14 @@
         <h5 class="card-title">Quản lý Ứng viên</h5>
       </div>
       <div class="card-body">
-        <form>
+        <form method="get" action="{% url 'manage_candidates' %}">
           <div class="mb-3">
             <label for="candidateSearch" class="form-label">Tìm kiếm Ứng viên</label>
-            <input type="text" class="form-control" id="candidateSearch" placeholder="Nhập tên hoặc email ứng viên">
+            <input type="text" class="form-control" id="candidateSearch" name="candidateSearch" placeholder="Nhập tên hoặc email ứng viên">
           </div>
           <div class="mb-3">
             <label for="candidateFilter" class="form-label">Lọc Ứng viên</label>
-            <select class="form-select" id="candidateFilter">
+            <select class="form-select" id="candidateFilter" name="candidateFilter">
               <option value="all">Tất cả</option>
               <option value="new">Ứng viên Mới</option>
               <option value="interviewed">Đã Phỏng vấn</option>
@@ -207,6 +288,71 @@
           </div>
           <button type="submit" class="btn btn-success">Tìm kiếm</button>
         </form>
+
+        <!-- Hiển thị danh sách ứng viên -->
+        <table class="table table-striped mt-4">
+          <thead>
+            <tr>
+              <th>Tên ứng viên</th>
+              <th>Email</th>
+              <th>Trạng thái</th>
+              <th>Ngày ứng tuyển</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if candidates %}
+              {% for candidate in candidates %}
+                <tr>
+                  <td>{{ candidate.name }}</td>
+                  <td>{{ candidate.email }}</td>
+                  <td>{{ candidate.get_status_display }}</td>
+                  <td>{{ candidate.applied_date|date:"d/m/Y" }}</td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="4" class="text-center">Không có ứng viên nào.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+
+        <!-- Phân trang -->
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            {% if candidates.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="First">
+                  <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ candidates.previous_page_number }}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            {% endif %}
+
+            <li class="page-item disabled">
+              <span class="page-link">
+                Trang {{ candidates.number }} / {{ candidates.paginator.num_pages }}
+              </span>
+            </li>
+
+            {% if candidates.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ candidates.next_page_number }}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ candidates.paginator.num_pages }}" aria-label="Last">
+                  <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
       </div>
     </div>
 
@@ -216,24 +362,30 @@
         <h5 class="card-title">Lịch Phỏng vấn</h5>
       </div>
       <div class="card-body">
-        <form>
-          <div class="mb-3">
-            <label for="interviewDate" class="form-label">Ngày Phỏng vấn</label>
-            <input type="date" class="form-control" id="interviewDate">
-          </div>
-          <div class="mb-3">
-            <label for="interviewTime" class="form-label">Thời gian Phỏng vấn</label>
-            <input type="time" class="form-control" id="interviewTime">
-          </div>
-          <div class="mb-3">
-            <label for="interviewCandidate" class="form-label">Ứng viên</label>
-            <select class="form-select" id="interviewCandidate">
-              <option value="candidate1">Ứng viên 1</option>
-              <option value="candidate2">Ứng viên 2</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-success">Lên Lịch</button>
-        </form>
+        {% if candidates %}
+          <form method="post" action="{% url 'schedule_interview' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="interviewDate" class="form-label">Ngày Phỏng vấn</label>
+              <input type="date" class="form-control" id="interviewDate" name="interviewDate" required>
+            </div>
+            <div class="mb-3">
+              <label for="interviewTime" class="form-label">Thời gian Phỏng vấn</label>
+              <input type="time" class="form-control" id="interviewTime" name="interviewTime" required>
+            </div>
+            <div class="mb-3">
+              <label for="interviewCandidate" class="form-label">Ứng viên</label>
+              <select class="form-select" id="interviewCandidate" name="interviewCandidate" required>
+                {% for candidate in candidates %}
+                  <option value="{{ candidate.id }}">{{ candidate.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-success">Lên Lịch</button>
+          </form>
+        {% else %}
+          <p class="text-center">Không có ứng viên nào để lên lịch phỏng vấn.</p>
+        {% endif %}
       </div>
     </div>
 
@@ -243,17 +395,24 @@
         <h5 class="card-title">Đánh giá Ứng viên</h5>
       </div>
       <div class="card-body">
-        <form>
-          <div class="mb-3">
-            <label for="candidateEvaluation" class="form-label">Đánh giá</label>
-            <textarea class="form-control" id="candidateEvaluation" rows="3" placeholder="Nhập đánh giá ứng viên"></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="evaluationScore" class="form-label">Điểm số</label>
-            <input type="number" class="form-control" id="evaluationScore" placeholder="Nhập điểm số">
-          </div>
-          <button type="submit" class="btn btn-success">Lưu Đánh giá</button>
-        </form>
+        {% if candidates %}
+          {% for candidate in candidates %}
+            <form method="post" action="{% url 'evaluate_candidate' candidate.id %}">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="candidateEvaluation" class="form-label">Đánh giá</label>
+                <textarea class="form-control" id="candidateEvaluation" name="candidateEvaluation" rows="3" placeholder="Nhập đánh giá ứng viên" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="evaluationScore" class="form-label">Điểm số</label>
+                <input type="number" class="form-control" id="evaluationScore" name="evaluationScore" placeholder="Nhập điểm số" required>
+              </div>
+              <button type="submit" class="btn btn-success">Lưu Đánh giá</button>
+            </form>
+          {% endfor %}
+        {% else %}
+          <p class="text-center">Không có ứng viên nào để đánh giá.</p>
+        {% endif %}
       </div>
     </div>
 
@@ -263,13 +422,18 @@
         <h5 class="card-title">Báo cáo và Phân tích</h5>
       </div>
       <div class="card-body">
-        <form>
+        <form method="post" action="{% url 'generate_report' %}">
+          {% csrf_token %}
           <div class="mb-3">
             <label for="reportType" class="form-label">Loại Báo cáo</label>
-            <select class="form-select" id="reportType">
+            <select class="form-select" id="reportType" name="reportType" required>
               <option value="performance">Hiệu quả Chiến dịch</option>
               <option value="candidate">Thống kê Ứng viên</option>
             </select>
+          </div>
+          <div class="mb-3">
+            <label for="reportContent" class="form-label">Nội dung</label>
+            <textarea class="form-control" id="reportContent" name="reportContent" rows="3" placeholder="Nhập nội dung báo cáo" required></textarea>
           </div>
           <button type="submit" class="btn btn-success">Tạo Báo cáo</button>
         </form>
@@ -282,10 +446,11 @@
         <h5 class="card-title">Tích hợp với Hệ thống Khác</h5>
       </div>
       <div class="card-body">
-        <form>
+        <form method="post" action="{% url 'integrate_system' %}">
+          {% csrf_token %}
           <div class="mb-3">
             <label for="integrationSystem" class="form-label">Hệ thống</label>
-            <select class="form-select" id="integrationSystem">
+            <select class="form-select" id="integrationSystem" name="integrationSystem" required>
               <option value="hrm">HRM</option>
               <option value="lms">LMS</option>
             </select>
@@ -301,10 +466,11 @@
         <h5 class="card-title">Quản lý Quyền Truy cập</h5>
       </div>
       <div class="card-body">
-        <form>
+        <form method="post" action="{% url 'manage_permissions' %}">
+          {% csrf_token %}
           <div class="mb-3">
             <label for="userRole" class="form-label">Vai trò Người dùng</label>
-            <select class="form-select" id="userRole">
+            <select class="form-select" id="userRole" name="userRole" required>
               <option value="hr">HR Manager</option>
               <option value="coordinator">Internship Coordinator</option>
               <option value="mentor">Mentor</option>
@@ -312,7 +478,7 @@
           </div>
           <div class="mb-3">
             <label for="userPermissions" class="form-label">Quyền Truy cập</label>
-            <select class="form-select" id="userPermissions">
+            <select class="form-select" id="userPermissions" name="userPermissions" required>
               <option value="read">Chỉ Đọc</option>
               <option value="write">Đọc và Ghi</option>
             </select>
@@ -328,14 +494,14 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
   <script>
     // Dark Mode Toggle
-    const themeSelect = document.getElementById('systemTheme');
-    const body = document.body;
-
-    themeSelect.addEventListener('change', function() {
-      if (this.value === 'dark') {
-        body.classList.add('dark-mode');
-      } else {
-        body.classList.remove('dark-mode');
+    document.addEventListener('change', function(event) {
+      if (event.target.matches('#systemTheme')) {
+        const body = document.body;
+        if (event.target.value === 'dark') {
+          body.classList.add('dark-mode');
+        } else {
+          body.classList.remove('dark-mode');
+        }
       }
     });
   </script>
